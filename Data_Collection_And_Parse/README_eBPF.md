@@ -47,7 +47,7 @@ In this code:
 
 Subsequently, running the `package.json` file with ecli launches the eBPF program. This program saves logs in the `/sys/kernel/debug/tracing/trace_pipe` file, which we redirect to the ebpf directory using the cat command.
 
-![example](ebpf_code\example.png)
+![example](ebpf_code/example.png)
 
 Log output showing command line records with PIDs and command content
 The program doesn't need to be recompiled before each launch; it can be run directly using the `ecli` tool with the `package.json` file. We have integrated the eBPF program's startup, shutdown, and log collection into the startup script start.sh and collection script collect.sh, which will run alongside auditbeat.
