@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 参数解析
+# parse
 scene="trace"
 with_anomaly=false
 train=false
