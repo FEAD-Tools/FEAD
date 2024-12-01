@@ -42,7 +42,6 @@ In this code:
 - Line 10 uses the `BPF_KRETPROBE` macro to define the probe function name and parameters
 - Line 18 uses the `bpf_get_current_pid_tgid` function to get the current process PID and stores it in the pid variable
 - Line 19 uses the `bpf_probe_read_user_str` function to read the return value of the readline function from user space and store it in the str array
-
 - Finally, line 21 uses the `bpf_printk` function to output the PID and user input string
 
 Subsequently, running the `package.json` file with ecli launches the eBPF program. This program saves logs in the `/sys/kernel/debug/tracing/trace_pipe` file, which we redirect to the ebpf directory using the cat command.
