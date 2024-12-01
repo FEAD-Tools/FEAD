@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 参数解析
-scene="opensmtpd"
+scene="trace"
 with_anomaly=false
 train=false
 
@@ -15,12 +15,12 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
-# 场景列表
-scenes=("opensmtpd" "log4jEnv")
+# scene list
+scenes=("cadets" "fivedirections" "theia" "trace")
 
-# 检查参数合法性
+
 if [[ ! " ${scenes[@]} " =~ " ${scene} " ]]; then
-    echo -e "\033[31mThe scene you choose should be one of opensmtpd, log4jEnv.\033[0m"
+    echo -e "\033[31mThe scene you choose should be one of cadets, fivedirections, theia, trace.\033[0m"
     exit 1
 fi
 
@@ -29,13 +29,13 @@ if [[ "$scene" != "opensmtpd" && "$scene" != "log4jEnv" && "$with_anomaly" == tr
     exit 1
 fi
 
-# 设置时间戳
+# timestamp setting
 current_time=$(date +"%Y-%m-%d_%H-%M-%S")
-# 创建结果目录
+
 mkdir -p ../result/models-$current_time
 
 if [[ "$train" == true ]]; then
-    # 进行训练、测试和评估
+    # train and test
     if [[ "$with_anomaly" == true ]]; then
         python train.py --scene "$scene" --with_anomaly
         python test.py --scene "$scene" --with_anomaly
@@ -44,7 +44,7 @@ if [[ "$train" == true ]]; then
         python test.py --scene "$scene"
     fi
 else
-    # 复制示例模型文件到models目录
+    # example_model deployment
     rm -rf ../models/*
     if [[ "$scene" == "opensmtpd" || "$scene" == "log4jEnv" ]]; then
         if [[ "$with_anomaly" == true ]]; then
@@ -55,7 +55,7 @@ else
     else
         cp ../example_models/"$scene"/* ../models/
     fi
-    # 直接进行测试和评估
+    # test and evaluation
     if [[ "$with_anomaly" == true ]]; then
         python test.py --scene "$scene" --with_anomaly
     else
@@ -63,9 +63,9 @@ else
     fi
 fi
 
-# 运行evaluate.py并保存结果
+# evaluate
 python evaluate.py > result.txt
 cat result.txt
-# 将文件复制到结果目录
+# results output
 cp ../models/* ../result/models-$current_time
 cp result.txt ../result/result-$current_time.txt

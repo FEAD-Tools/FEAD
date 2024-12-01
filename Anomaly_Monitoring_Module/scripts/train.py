@@ -8,9 +8,9 @@ from torch_geometric.nn import GATConv
 from process_train import *
 from process_test import *
 
-scenes = ["opensmtpd", "log4jEnv", "cadets", "fivedirections", "theia", "trace"]
-thre_map = {"opensmtpd":1.5, "log4jEnv": 1.5, "cadets":1.5, "fivedirections":1.0, "theia":1.5, "trace":1.0}
-batch_size_map = {"opensmtpd":50, "log4jEnv": 50, "cadets":5000, "fivedirections":5000, "theia":5000, "trace":5000}
+scenes = ["opensmtpd", "log4jEnv", "cadets", "fivedirections", "theia", "trace", "ces-cic"]
+thre_map = {"opensmtpd":1.5, "log4jEnv": 1.5, "cadets":1.5, "fivedirections":1.0, "theia":1.5, "trace":1.0, "ces-cic":1.0}
+batch_size_map = {"opensmtpd":50, "log4jEnv": 50, "cadets":5000, "fivedirections":5000, "theia":5000, "trace":5000, "ces-cic":500}
 
 class GATNet(torch.nn.Module):
     def __init__(self, in_channels, out_channels, heads = 8, dropout_rate = 0.5):
@@ -40,15 +40,17 @@ class trainingSystem:
         self.tn_list = []
         self.recall_thre = 0.8
         self.precision_thre = 0.7
+        if self.scene == "fivedirections":
+            self.recall_thre = 0.6
+            self.precision_thre = 0.4
         if self.scene == "opensmtpd":
             self.recall_thre = 0.7
-        self.bad_count = 0
         os.system('cp ../groundtruth/' + self.scene + '.txt groundtruth_id.txt')
 
     def startTraining(self):
         for file in os.listdir(self.model_path):
             os.system('rm ' + self.model_path + file)
-        temp_data, self.feature_num, self.label_num = GenerateTrainDataset(self.data_path, self.model_path, self.scene, self.with_anomaly)
+        temp_data, self.feature_num, self.label_num = GenerateTrainDataset(self.data_path, self.model_path, self.with_anomaly)
         self.data = TrainDataset(temp_data)[0]
         print(self.data)
         print('feature ', self.feature_num, '; label ', self.label_num)
@@ -89,7 +91,7 @@ class trainingSystem:
                 loss = self.train()
                 auc = self.evaluate(self.data.test_mask)
                 print(epoch, loss, auc, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time())))
-                if loss < 0.2: break
+                if loss < 0.5: break
         print("Finish training")
 
     def train(self):
@@ -148,12 +150,7 @@ class trainingSystem:
         #gtNode: GroundTruth Node
         #gtNode2Hop 是一个List，用于存储gtNode两跳内的节点, 包括gtNode本身
         #twoHopTogtNode是一个字典，它的键是两跳内可以到达gtNode的节点, k->j->i(包括gtNode本身)，值是一个列表，里面是它可以到达的gtNode中的节点
-        # temp_data, self.feature_num, self.label_num, _, _, gtNode, gtNode2Hop, twoHopTogtNode = GenerateTestDataset(self.data_path, self.model_path, self.with_anomaly)
-        if self.with_anomaly:
-            temp_data, self.feature_num, self.label_num, self.adjTargetToSource, self.adjSourceToTarget, gtNode, gtNode2Hop, twoHopTogtNode, self.malicious_node_list,_ = GenerateTestDataset(self.data_path, self.model_path, self.with_anomaly)
-        else:
-            temp_data, self.feature_num, self.label_num, self.adjTargetToSource, self.adjSourceToTarget, gtNode, gtNode2Hop, twoHopTogtNode = GenerateTestDataset(self.data_path, self.model_path, self.with_anomaly)
-        
+        temp_data, self.feature_num, self.label_num, _, _, gtNode, gtNode2Hop, twoHopTogtNode = GenerateTestDataset(self.data_path, self.model_path, self.with_anomaly)
         self.data = TestDataset(temp_data)[0]
         print(self.data)
         self.loader = NeighborSampler(self.data, size = [1.0, 1.0], num_hops = 2, batch_size = self.batch_size, shuffle = False, add_self_loops = True)
@@ -208,11 +205,11 @@ class trainingSystem:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--scene', type = str, default = 'opensmtpd')
+    parser.add_argument('--scene', type = str, default = 'trace')
     parser.add_argument('--with_anomaly', action = "store_true")
     args = parser.parse_args()
     if args.scene not in scenes:
-        print("\033[31mThe scene you choose should be one of opensmtpd, log4jEnv, cadets, fivedirections, theia, trace.\033[0m")
+        print("\033[31mThe scene you choose should be one of cadets, fivedirections, theia, trace.\033[0m")
     if args.scene != "opensmtpd" and args.scene != "log4jEnv" and args.with_anomaly == True:
         print("\033[31mOnly in scene \"opensmtpd\" or \"log4jEnv\" can parameter --with_anomaly be used to specify the use of abnormal scores for training and testing.\033[0m")
     assert(args.scene in scenes)

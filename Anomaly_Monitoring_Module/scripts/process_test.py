@@ -124,41 +124,41 @@ def GenerateTestDataset(data_path, model_path, with_anomaly = False):
         train_mask.append(True)
         test_mask.append(True)
 
-    with open('node_features.csv', 'w', newline='') as csvfile:
-        csvwriter = csv.writer(csvfile)
-        headers = ['EdgeID', 'NodeId', 'Features', 'Type']
-        csvwriter.writerow(headers)
-        index = 0
-        for temp in provenance:
-            srcId = temp[0]
-            srcType = temp[1]
-            dstId = temp[2]
-            dstType = temp[3]
-            edge = temp[4]
+    # with open('node_features.csv', 'w', newline='') as csvfile:
+    #     csvwriter = csv.writer(csvfile)
+    #     headers = ['EdgeID', 'NodeId', 'Features', 'Type']
+    #     csvwriter.writerow(headers)
+    #     index = 0
+    for temp in provenance:
+        srcId = temp[0]
+        srcType = temp[1]
+        dstId = temp[2]
+        dstType = temp[3]
+        edge = temp[4]
 
-            x_list[srcId][edge] += 1
+        x_list[srcId][edge] += 1
+        if with_anomaly:
             src_id = node_index2id_map[srcId]
-            if with_anomaly:
-                src_info = malicious_node_dict.get(src_id, 0)
-                x_list[srcId][feature_num - 1] = src_info
-            y_list[srcId] = srcType
+            src_info = malicious_node_dict.get(src_id, 0)
+            x_list[srcId][feature_num - 1] = src_info
+        y_list[srcId] = srcType
 
-            x_list[dstId][edge + feature_num] += 1
+        x_list[dstId][edge + feature_num] += 1
+        if with_anomaly:
             dst_id = node_index2id_map[dstId]
-            if with_anomaly:
-                dst_info = malicious_node_dict.get(dst_id, 0)
-                x_list[dstId][feature_num * 2 - 1] = dst_info
-            y_list[dstId] = dstType
+            dst_info = malicious_node_dict.get(dst_id, 0)
+            x_list[dstId][feature_num * 2 - 1] = dst_info
+        y_list[dstId] = dstType
 
-            label = "0"
-            if srcId in gtNode:
-                label = "1"
-            csvwriter.writerow([str(index),src_id, x_list[srcId], srcType,label])        
-            label = "0"
-            if dstId in gtNode:
-                label = "1"
-            csvwriter.writerow([str(index),dst_id, x_list[dstId], dstType,label])
-            index += 1
+            # label = "0"
+            # if srcId in gtNode:
+            #     label = "1"
+            # csvwriter.writerow([str(index),src_id, x_list[srcId], srcType,label])        
+            # label = "0"
+            # if dstId in gtNode:
+            #     label = "1"
+            # csvwriter.writerow([str(index),dst_id, x_list[dstId], dstType,label])
+            # index += 1
 
     x = torch.tensor(x_list, dtype=torch.float)	
     y = torch.tensor(y_list, dtype=torch.long)
@@ -203,11 +203,4 @@ def GenerateTestDataset(data_path, model_path, with_anomaly = False):
     #gtNode: GroundTruth Node
     #gtNode2Hop 是一个List，用于存储gtNode两跳内的节点, 包括gtNode本身
     #twoHopTogtNode是一个字典，它的键是两跳内可以到达gtNode的节点, k->j->i(包括gtNode本身)，值是一个列表，里面是它可以到达的gtNode中的节点
-    if with_anomaly:
-       malicious_node_list=[]
-       for item in malicious_node_dict.keys():
-           if malicious_node_dict[item]>0 and item in node_id2index_map:
-            malicious_node_list.append(node_id2index_map[item]) 
-       return [data1], feature_num, label_num, adjTargetToSource, adjSourceToTarget, gtNode, gtNode2Hop, twoHopTogtNode, malicious_node_list,provenance
-    
     return [data1], feature_num, label_num, adjTargetToSource, adjSourceToTarget, gtNode, gtNode2Hop, twoHopTogtNode

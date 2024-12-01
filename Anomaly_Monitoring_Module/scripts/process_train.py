@@ -24,7 +24,7 @@ def process_csv_data(csv_data):
         result_dict[key] = value    
     return result_dict
 
-def GenerateTrainDataset(data_path, model_path, scene, with_anomaly = False):
+def GenerateTrainDataset(data_path, model_path, with_anomaly = False):
     node_cnt = 0
     provenance = []
     nodeType_cnt = 0
@@ -73,17 +73,9 @@ def GenerateTrainDataset(data_path, model_path, scene, with_anomaly = False):
             edge_s.append(temp[0])
             edge_e.append(temp[2])
             provenance.append(temp)
-    if scene == 'log4jEnv':
-        edgeType_map['readEnv'] = edgeType_cnt
-        edgeType_cnt += 1
-        edgeType_map['writeEnv'] = edgeType_cnt
-        edgeType_cnt += 1
     with open(model_path + 'feature.txt', 'w') as feature_fp:
         for i in edgeType_map.keys():
             feature_fp.write(str(i)+'\t'+str(edgeType_map[i])+'\n')
-    if scene == 'log4jEnv':
-        nodeType_map['Env'] = nodeType_cnt
-        nodeType_cnt += 1
     with open(model_path + 'label.txt', 'w') as label_fp:
         for i in nodeType_map.keys():
             label_fp.write(str(i)+'\t'+str(nodeType_map[i])+'\n')

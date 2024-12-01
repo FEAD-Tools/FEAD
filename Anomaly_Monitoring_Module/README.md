@@ -22,24 +22,18 @@ Our training and testing environment is configured as follows:
 
   Other packages can be installed according to dependency requirements.
 
-## Edge Monitoring
-
-First, edge monitoring is performed. By executing `score.py`, preliminary monitoring of edge-side data is conducted using predefined detection rules (refer to the "Monitor Detection Rules Documentation" deliverable). This generates the `nodes_with_encode_reduce_index_deldup_anomaly.csv` file.
-
-## Global Traceability Analysis
+## Locality-based Anomaly Analysis
 
 The training and testing data files are organized in the following directory structure with six subfolders:
 
 ### Directory Structure
 
 1. **data/**
- - Contains training and testing data for two scenarios: opensmtpd and log4jEnv
+ - Contains training and testing data for DARPA-TC (Due to Git file size limitations, the dataset is hosted externally. You can download it from: [Dataset Download Link](https://drive.google.com/file/d/13oWnCt1uPHjF5iIfUeNmNFoNByRl1_Qw/view?usp=sharing))
  - Each scenario includes `train.txt` and `test.txt`
- - Also contains `nodes_with_encode_reduce_index_deldup_anomaly_benign.csv` and `nodes_with_encode_reduce_index_deldup_anomaly_malicious.csv` for training and testing with anomaly scores
 
 2. **example_models/**
  - Contains ready-to-use example models for both scenarios
- - Models are organized in `models_no_anomaly` and `models_with_anomaly` based on whether anomaly scores are used
 
 3. **groundtruth/**
  - Contains true anomaly node information for both scenarios
@@ -58,17 +52,15 @@ The training and testing data files are organized in the following directory str
 The `run.sh` script in the scripts folder provides one-click completion of training, testing, and evaluation operations. It accepts three optional parameters:
 
 ```bash
---scene scene_name    # Specifies the scenario (opensmtpd or log4jEnv, default: opensmtpd)
---with_anomaly       # Specifies whether to use anomaly scores (default: false)
---train             # Specifies whether to retrain (default: false, uses example models)
+--scene scene_name    # Specifies the scenario ("cadets", "fivedirections", "theia", or "trace", default: trace)
+--train               # Specifies whether to retrain (default: false, uses example models)
 ```
 
 ## Example Commands
 
 ```
-./run.sh                                           # opensmtpd scenario, no anomaly, using example model
-./run.sh --with_anomaly --scene opensmtpd          # opensmtpd scenario, with anomaly, using example model
-./run.sh --scene log4jEnv --with_anomaly --train   # log4jEnv scenario, with anomaly, retraining model
+./run.sh                                        # trace scenario,  using example model
+./run.sh --scene trace --with_anomaly --train   # trace scenario,  retraining model
 ```
 
 ## Results
