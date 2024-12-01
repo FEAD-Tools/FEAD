@@ -1,7 +1,7 @@
 Execute the following 5 scripts in sequence:
 
 ```bash
-python3 1.parse_auditbeat.py     # Parse logs to generate node.csv and edge.csv in malicious_data folder
+python3 1.parse_auditbeat_e3.py     # Parse logs to generate node.csv and edge.csv in malicious_data folder
 python3 2.word_embedding.py              # Perform node information embedding
 python3 3.word_embedding_hashcode.py     # Generate node indexes
 python3 4.word_embedding_deldup.py       # Perform node deduplication
