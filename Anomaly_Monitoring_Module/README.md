@@ -4,15 +4,23 @@
 
 Our training and testing environment is configured as follows:
 - `Python 3.8.10`
+
 - Key dependencies:
-`torch                  1.4.0+cpu`
-`torch-cluster          1.5.4`
-`torch-geometric        1.4.3`
-`torch-scatter          2.0.4`
-`torch-sparse           0.6.1`
-`torch-spline-conv      1.2.0`
-`torchvision            0.5.0+cpu`
-Other packages can be installed according to dependency requirements.
+  `torch                  1.4.0+cpu`
+
+  `torch-cluster          1.5.4`
+
+  `torch-geometric        1.4.3`
+
+  `torch-scatter          2.0.4`
+
+  `torch-sparse           0.6.1`
+
+  `torch-spline-conv      1.2.0`
+
+  `torchvision            0.5.0+cpu`
+
+  Other packages can be installed according to dependency requirements.
 
 ## Edge Monitoring
 
@@ -58,9 +66,9 @@ The `run.sh` script in the scripts folder provides one-click completion of train
 ## Example Commands
 
 ```
-./run.sh                                           # opensmtpd scenario, no anomaly scores, using example model
-./run.sh --with_anomaly --scene opensmtpd          # opensmtpd scenario, with anomaly scores, using example model
-./run.sh --scene log4jEnv --with_anomaly --train   # log4jEnv scenario, with anomaly scores, retraining model
+./run.sh                                           # opensmtpd scenario, no anomaly, using example model
+./run.sh --with_anomaly --scene opensmtpd          # opensmtpd scenario, with anomaly, using example model
+./run.sh --scene log4jEnv --with_anomaly --train   # log4jEnv scenario, with anomaly, retraining model
 ```
 
 ## Results
