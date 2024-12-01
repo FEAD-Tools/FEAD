@@ -6,20 +6,21 @@ Our training and testing environment is configured as follows:
 - `Python 3.8.10`
 
 - Key dependencies:
+  
   `torch                  1.4.0+cpu`
-
+  
   `torch-cluster          1.5.4`
-
+  
   `torch-geometric        1.4.3`
-
+  
   `torch-scatter          2.0.4`
-
+  
   `torch-sparse           0.6.1`
-
+  
   `torch-spline-conv      1.2.0`
-
+  
   `torchvision            0.5.0+cpu`
-
+  
   Other packages can be installed according to dependency requirements.
 
 ## Locality-based Anomaly Analysis
