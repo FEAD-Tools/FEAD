@@ -1,0 +1,3 @@
+Proc	0
+File	1
+Socket	2

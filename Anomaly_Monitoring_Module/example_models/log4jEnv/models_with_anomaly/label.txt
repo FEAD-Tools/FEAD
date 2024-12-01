@@ -1,0 +1,4 @@
+File	0
+Proc	1
+Socket	2
+Env	3
